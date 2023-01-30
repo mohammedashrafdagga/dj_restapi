@@ -7,7 +7,8 @@ endpoint = 'http://localhost:8000/api/'  # http://127.0.0.1:8000/
 
 
 # send request
-get_response = requests.get(endpoint)
+get_response = requests.get(
+    endpoint, params={'project_slug': 'sdlkbnndzxvj'}, json={'query': 'slug'})
 
 #  get Json from application  response
 print(get_response.json())
@@ -16,4 +17,4 @@ print(get_response.json())
 print(get_response.status_code)
 
 # print a message form json
-print(get_response.json()['message'])
+# print(get_response.json())
