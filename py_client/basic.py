@@ -7,8 +7,7 @@ endpoint = 'http://localhost:8000/api/'  # http://127.0.0.1:8000/
 
 
 # send request
-get_response = requests.get(
-    endpoint, params={'project_slug': 'sdlkbnndzxvj'}, json={'query': 'slug'})
+get_response = requests.get(endpoint, json={'query': 'slug'})
 
 #  get Json from application  response
 print(get_response.json())
