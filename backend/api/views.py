@@ -5,11 +5,12 @@ from rest_framework.decorators import api_view
 from product.serializers import ProductSerializer
 
 
-@api_view(['GET'])  # list of method that allow access in this api view
+@api_view(['GET', 'POST'])  # list of method that allow access in this api view
 def api_home(request, *args, **kwargs):
-    instance = Product.objects.all().order_by('?').first()
-    data = {}
-    if instance:
-        # clean up way
-        data = ProductSerializer(instance).data
-    return Response(data)
+    serializer = ProductSerializer(data=request.data)
+    if serializer.is_valid(raise_exception=True):
+        # print(serializer)
+        instance = serializer.save()
+        return Response(serializer.data)
+    return Response({
+        'invalid': 'something is wrong!!'}, status=400)

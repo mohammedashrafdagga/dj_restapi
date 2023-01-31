@@ -17,4 +17,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_my_discount(self, obj):
         #  get my_discount method represent my_discount serializer filed
+        # check is onj is instance from Product
+        if not isinstance(obj, Product):
+            return None
         return obj.get_discount()  # return get_discount model method
