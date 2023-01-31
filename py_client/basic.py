@@ -13,7 +13,7 @@ get_response = requests.get(endpoint, json={'query': 'slug'})
 print(get_response.json())
 
 # status code
-print(get_response.status_code)
+# print(get_response.status_code)
 
 # print a message form json
 # print(get_response.json())
