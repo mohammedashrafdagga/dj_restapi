@@ -1,9 +1,9 @@
-from rest_framework import generics
+from rest_framework import generics, mixins
 from .models import Product
 from .serializers import ProductSerializer
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from django.shortcuts import get_object_or_404
+# from rest_framework.response import Response
+# from rest_framework.decorators import api_view
+# from django.shortcuts import get_object_or_404
 # create product api view
 
 
@@ -64,6 +64,37 @@ class ProductDeleteApiView(generics.DestroyAPIView):
 
 product_delete_view = ProductDeleteApiView.as_view()
 
+
+# Using Mixins View
+class ProductMixinsView(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    generics.GenericAPIView
+):
+
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+    # get
+    def get(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        if pk:
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        title = serializer.validated_data.get('title')
+        content = serializer.validated_data.get('content') or None
+        if content is None:
+            content = 'From mixins updated your content'
+        serializer.save(content=content)
+
+
+product_mixin_view = ProductMixinsView.as_view()
 
 # Function Based View (List, Retrieve, Create)
 # @api_view(['GET', 'POST'])
