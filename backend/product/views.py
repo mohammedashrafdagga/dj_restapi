@@ -5,7 +5,7 @@ from .serializers import ProductSerializer
 # create product api view
 
 
-class ProductCreateAPIView(generics.CreateAPIView):
+class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
@@ -19,8 +19,8 @@ class ProductCreateAPIView(generics.CreateAPIView):
         serializer.save(content=content)
 
 
-# create product view
-product_create_view = ProductCreateAPIView.as_view()
+# list and create product view
+product_list_create_view = ProductListCreateAPIView.as_view()
 
 
 class ProductDetailApiView(generics.RetrieveAPIView):
@@ -30,3 +30,16 @@ class ProductDetailApiView(generics.RetrieveAPIView):
 
 
 product_detail_view = ProductDetailApiView.as_view()
+
+# list api views
+
+
+class ProductListAPIView(generics.ListAPIView):
+    '''
+        Not Used Here
+    '''
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
+product_list_view = ProductListAPIView.as_view()
