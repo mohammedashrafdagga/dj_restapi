@@ -35,7 +35,8 @@ class ProductDetailApiView( StaffPermissionMixins,
 # Update View
 class ProductUpdateApiView(
      StaffPermissionMixins,
-     generics.UpdateAPIView):
+     generics.UpdateAPIView
+     ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
