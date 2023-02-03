@@ -4,16 +4,19 @@ from .serializers import ProductSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
+
+from api.mixins import StaffPermissionMixins
 # create product api view
 
 
-class ProductListCreateAPIView(generics.ListCreateAPIView):
+class ProductListCreateAPIView(
+    StaffPermissionMixins,
+    generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
+
     def perform_create(self, serializer):
-        # serializer.save(user = self.request.user)
-        # print(serializer.validated_data)
         title = serializer.validated_data.get('title')
         content = serializer.validated_data.get('content') or None
         if content is None:
@@ -22,13 +25,17 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
 
 
 # detail View
-class ProductDetailApiView(generics.RetrieveAPIView):
+class ProductDetailApiView( StaffPermissionMixins,
+                           generics.RetrieveAPIView
+                           ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
 
 # Update View
-class ProductUpdateApiView(generics.UpdateAPIView):
+class ProductUpdateApiView(
+     StaffPermissionMixins,
+     generics.UpdateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
@@ -40,7 +47,8 @@ class ProductUpdateApiView(generics.UpdateAPIView):
 
 
 # destroy View
-class ProductDeleteApiView(generics.DestroyAPIView):
+class ProductDeleteApiView( StaffPermissionMixins,
+                           generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
@@ -54,6 +62,7 @@ class ProductDeleteApiView(generics.DestroyAPIView):
 # (This Class merge List, Retrieve and Create Class API View) in One Class
 
 class ProductMixinsView(
+     StaffPermissionMixins,
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
     mixins.ListModelMixin,

@@ -1,16 +1,29 @@
 import requests
 
+from getpass import getpass
 
-# data saved
-data = {'title': 'Python Request',
+auth_endpoint = 'http://localhost:8000/api/auth/'
 
-        'price': 32.22}
-# endpoint
-endpoint = 'http://localhost:8000/api/product/'
+password = getpass()
 
+auth_response = requests.post(
+    auth_endpoint, json={'username': 'staff', 'password': password})
 
-# get response
-response = requests.post(endpoint, json=data)
+if auth_response.status_code == 200:
+    # get token
+    token = auth_response.json()['token']
 
-# print json
-print(response.json())
+    # data saved
+    data = {'title': 'Python Request',
+            'price': 32.22}
+    # endpoint
+    endpoint = 'http://localhost:8000/api/product/'
+
+    # headers
+    headers = {'Authorization': f'Bearer {token}'}
+
+    # get response
+    response = requests.post(endpoint, json=data, headers=headers)
+
+    # print json
+    print(response.json())
