@@ -4,12 +4,12 @@ from .serializers import ProductSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
-
-from api.mixins import StaffPermissionMixins
+from api.mixins import StaffPermissionMixins, UserQuerySetMixins
 # create product api view
 
 
 class ProductListCreateAPIView(
+    UserQuerySetMixins,
     StaffPermissionMixins,
     generics.ListCreateAPIView):
     queryset = Product.objects.all()
@@ -19,13 +19,22 @@ class ProductListCreateAPIView(
     def perform_create(self, serializer):
         title = serializer.validated_data.get('title')
         content = serializer.validated_data.get('content') or None
+        # email = serializer.validated_data.pop('email')
         if content is None:
             content = title
-        serializer.save(content=content)
+        serializer.save(content=content, user = self.request.user)
 
+    # def get_queryset(self, *args, **kwargs):
+    #     user = self.request.user
+    #     if not user.is_authenticated:
+    #         return Product.objects.none()
+    #     qs = super().get_queryset(*args, **kwargs)
+    #     return qs.filter(user = user)
 
 # detail View
-class ProductDetailApiView( StaffPermissionMixins,
+class ProductDetailApiView( 
+                            UserQuerySetMixins,
+                           StaffPermissionMixins,
                            generics.RetrieveAPIView
                            ):
     queryset = Product.objects.all()
@@ -34,8 +43,10 @@ class ProductDetailApiView( StaffPermissionMixins,
 
 # Update View
 class ProductUpdateApiView(
+     UserQuerySetMixins,
      StaffPermissionMixins,
-     generics.UpdateAPIView):
+     generics.UpdateAPIView
+     ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
@@ -47,7 +58,9 @@ class ProductUpdateApiView(
 
 
 # destroy View
-class ProductDeleteApiView( StaffPermissionMixins,
+class ProductDeleteApiView( 
+                            UserQuerySetMixins,
+                           StaffPermissionMixins,
                            generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -62,6 +75,7 @@ class ProductDeleteApiView( StaffPermissionMixins,
 # (This Class merge List, Retrieve and Create Class API View) in One Class
 
 class ProductMixinsView(
+     UserQuerySetMixins,
      StaffPermissionMixins,
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
