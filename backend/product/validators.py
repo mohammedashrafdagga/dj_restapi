@@ -19,4 +19,4 @@ def validate_title_not_contains_hello(value):
 
 
 # build in in django
-unique_title  = UniqueValidator(queryset=Product.objects.all())
+unique_title  = UniqueValidator(queryset=Product.objects.all(), lookup='iexact')
