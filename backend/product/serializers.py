@@ -2,8 +2,21 @@ from rest_framework import serializers
 from .models import Product
 from rest_framework.reverse import reverse
 from .validators import unique_title, validate_title_not_contains_hello
+from api.serializers import UserPublicSerializer, UserPublicModelSerializer
 
+class UserProductInlineSerializer(serializers.Serializer):
+    url = serializers.HyperlinkedIdentityField(
+        view_name='product-detail',
+        lookup_field = 'pk',
+        read_only=True
+    )
+    title = serializers.CharField(read_only = True)
+    
+    
+    
 class ProductSerializer(serializers.ModelSerializer):
+    # user = UserPublicSerializer( read_only = True)
+    user = UserPublicModelSerializer(read_only=True)
     my_discount = serializers.SerializerMethodField(read_only=True)
     edit_url = serializers.SerializerMethodField(read_only = True)
     url = serializers.HyperlinkedIdentityField(
@@ -13,11 +26,16 @@ class ProductSerializer(serializers.ModelSerializer):
     title = serializers.CharField(validators = [unique_title, validate_title_not_contains_hello])
     # using source
     name = serializers.CharField(source = 'title', read_only = True)
+    user_data = serializers.SerializerMethodField(read_only = True)
     # also fk such as get email from user
+    related_product = UserProductInlineSerializer(source = 'user.product_set.all',
+                                                read_only = True, many=True)
     # email = serializers.EmailField(source = 'user.email', read_only = True)
     class Meta:
         model = Product
         fields = [
+            'user',
+            'related_product',
             'edit_url',
             'url',
             # 'user',
@@ -27,7 +45,8 @@ class ProductSerializer(serializers.ModelSerializer):
             'content',
             'price',
             'sale_price',
-            'my_discount'
+            'my_discount',
+            'user_data'
         ]
         
     # def validate_<filed_name>(self, value):  syntax
@@ -38,7 +57,13 @@ class ProductSerializer(serializers.ModelSerializer):
     #     if qs.exists():
     #         raise serializers.ValidationError(f'{value} is already exists')
     #     return value
-        
+    
+    def get_user_data(self, obj):
+     
+        return {
+                'username': obj.user.username,
+                'id': obj.user.id
+                }
         
     # def create(self, validated_data):
     #     # return Product.objects.create(**validated_data)
