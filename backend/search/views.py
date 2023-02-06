@@ -1,9 +1,27 @@
 from rest_framework import generics
 from product.models import Product
 from product.serializers import ProductSerializer
+from rest_framework.response import Response
+from . import client
 
+class SearchListView(generics.GenericAPIView):
+    def get(self,request, *args, **kwargs):
+        user = None
+        if request.user.is_authenticated:
+            user = request.user
+        query = request.GET.get('q')
+        tags = request.GET.get('tags') or None
+        public = str(request.GET.get('public')) != '0'
+        if not query:
+            return Response({'detail':'not have any data'}, status=400)
 
-class SearchListView(generics.ListAPIView):
+        results = client.perform_search(query, tags=tags, user = user, public = public)
+        return Response(results)
+    
+    
+    
+    
+class SearchOldListView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
