@@ -1,16 +1,17 @@
 
-
 from pathlib import Path
-
+from dotenv import load_dotenv
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv() # load env variable
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-+$5od%z6_+$wp%3nzie%q=q9(o-2r*-*lap8_*dkeuh9bo3v9b"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,6 +33,9 @@ INSTALLED_APPS = [
     'api',
     'product',
     'search',
+    # Third party packages
+    'algoliasearch_django',
+    
 ]
 
 MIDDLEWARE = [
@@ -129,4 +133,12 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5
+}
+
+
+# Algolia
+ALGOLIA = {
+    'APPLICATION_ID': os.environ.get('APPLICATION_ID'),
+    'API_KEY': os.environ.get('API_KEY'),
+    'INDEX_PREFIX': os.environ.get('INDEX_PREFIX')
 }
