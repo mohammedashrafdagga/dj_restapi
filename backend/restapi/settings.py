@@ -2,6 +2,7 @@
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+import datetime
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -35,6 +36,8 @@ INSTALLED_APPS = [
     'search',
     # Third party packages
     'algoliasearch_django',
+    # Third Party Library
+    'rest_framework_simplejwt',
     
 ]
 
@@ -126,7 +129,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         'rest_framework.authentication.SessionAuthentication',
-        'api.authentication.TokenAuthentication'
+        'api.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
@@ -141,4 +145,10 @@ ALGOLIA = {
     'APPLICATION_ID': os.environ.get('APPLICATION_ID'),
     'API_KEY': os.environ.get('API_KEY'),
     'INDEX_PREFIX': os.environ.get('INDEX_PREFIX')
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ['Bearer'],
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(seconds=30),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(minutes=1)
 }
