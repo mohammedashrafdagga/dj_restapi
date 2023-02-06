@@ -1,7 +1,11 @@
 from django.db import models
 from django.conf import settings
 from django.db.models import Q
+import random
 # Create your models here.
+
+
+TAGS_MODEL_VALUES = ['electronics','cars','books','movies','cameras']
 
 User = settings.AUTH_USER_MODEL
 
@@ -37,6 +41,10 @@ class Product(models.Model):
 
     objects = ProductManger()
 
+    # return tags list
+    def get_tag_lit(self):
+        return [random.choice(TAGS_MODEL_VALUES)]
+    
     @property
     def sale_price(self):
         return '%.2f' % (float(self.price) * 0.8)
